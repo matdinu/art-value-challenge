@@ -1,8 +1,20 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Serif_Text, Fredericka_the_Great } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const dmserif = DM_Serif_Text({
+  subsets: ["latin"],
+  display: "swap",
+  weight: "400",
+  variable: "--font-dmserif",
+});
+
+const fredericka = Fredericka_the_Great({
+  subsets: ["latin"],
+  display: "swap",
+  weight: "400",
+  variable: "--font-fredericka",
+});
 
 export const metadata: Metadata = {
   title: "ArtValue Challenge",
@@ -16,7 +28,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        />
+      </head>
+      <body className={`${dmserif.variable} ${fredericka.variable}`}>
+        {children}
+      </body>
     </html>
   );
 }
