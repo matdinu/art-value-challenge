@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 const Page = () => {
   const [currentRound, setCurrentRound] = useState(1);
@@ -29,6 +30,7 @@ const Page = () => {
   ]);
 
   const currentArt = artData[currentRound - 1] || {};
+  const previousArt = artData[currentRound - 2] || {};
 
   const handleGuess = () => {
     const difference = Math.abs(guess - currentArt.price);
@@ -41,7 +43,7 @@ const Page = () => {
       };
       return newArtData;
     });
-    setScore(score + accuracy);
+    setScore(Math.max(score + accuracy, 0));
     setCurrentRound(currentRound + 1);
   };
 
@@ -51,33 +53,49 @@ const Page = () => {
       <h1 className="text-3xl">ArtValue Challenge</h1>
       <p className="text-xl">Round {currentRound}</p>
       <img
-        className="max-h-[50vh] max-w-[50vw] rounded-md"
-        src={currentArt.imageUrl}
-        alt="Artwork"
+      className="max-h-[50vh] max-w-[50vw] rounded-md"
+      src={currentArt.imageUrl}
+      alt="Artwork"
       />
       <p>Guess the price of the artwork</p>
       <label className="input input-primary flex items-center gap-2">
-        <input
-          type="text"
-          placeholder="Enter the price in euros"
-          value={guess ? guess.toLocaleString() : ""}
-          onChange={(e) => {
+      <input
+        type="text"
+        placeholder="Enter the price in euros"
+        value={guess ? guess.toLocaleString() : ""}
+        onChange={(e) => {
         const value = e.target.value.replace(/[^\d]/g, "");
         setGuess(value ? parseInt(value, 10) : 0);
-          }}
-        />
-        <span>€</span>
+        }}
+      />
+      <span>€</span>
       </label>
       <button className="btn btn-primary" onClick={handleGuess}>
-        Guess
+      Guess
       </button>
-      {score > 0 && (
-        <p>Accuracy: {Math.round((score / (currentRound - 1)) * 100)}%</p>
+      {previousArt.guess !== undefined && (
+      <p>
+        Previous Round Accuracy:{" "}
+        {Math.max(
+        Math.round(
+          (1 - Math.abs(previousArt.guess - previousArt.price) / previousArt.price) * 100
+        ),
+        0
+        )}
+        %
+      </p>
       )}
-    </div> :
+      {score > 0 && (
+      <p>Overall Accuracy: {Math.max(Math.round((score / (currentRound - 1)) * 100), 0)}%</p>
+      )}
+    </div>:
     <div className="flex flex-col gap-4 items-center justify-center h-screen">
       <h1 className="text-3xl">ArtValue Challenge</h1>
       <p className="text-xl">Summary</p>
+      <div className="text-center">
+        <p>Total Rounds: {artData.length}</p>
+        <p>Overall Accuracy: {Math.max(Math.round((score / (currentRound - 1)) * 100), 0)}%</p>
+      </div>
       <table className="table-auto">
       <thead>
         <tr>
@@ -99,15 +117,19 @@ const Page = () => {
           </td>
           <td className="border px-4 py-2">{art.price.toLocaleString()}</td>
           <td className="border px-4 py-2">{art.guess?.toLocaleString() || "N/A"}</td>
-          <td className="border px-4 py-2">
-          {art.guess !== undefined
-            ? `${Math.round((1 - Math.abs(art.guess - art.price) / art.price) * 100)}%`
+            <td className="border px-4 py-2">
+            {art.guess !== undefined
+            ? `${Math.max(Math.round((1 - Math.abs(art.guess - art.price) / art.price) * 100), 0)}%`
             : "N/A"}
-          </td>
+            </td>
         </tr>
         ))}
       </tbody>
       </table>
+      {/* play again link that redirects to "/"*/}
+      <Link href="/" className="btn btn-secondary mt-4">
+        Play Again
+      </Link>
     </div>
   );
 };

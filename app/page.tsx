@@ -15,6 +15,17 @@ export default function HomePage() {
         <p className="text-lg">
           Guess the value of different art pieces and test your knowledge.
         </p>
+        <div className="flex gap-4">
+          <Link href="/game?rounds=5">
+            <button className="bg-primary text-white rounded px-4 py-2">5 Rounds</button>
+          </Link>
+          <Link href="/game?rounds=15">
+            <button className="bg-primary text-white rounded px-4 py-2">15 Rounds</button>
+          </Link>
+          <Link href="/game?rounds=100">
+            <button className="bg-primary text-white rounded px-4 py-2">100 Rounds</button>
+          </Link>
+        </div>
       </div>
     </main>
   );
